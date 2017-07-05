@@ -105,6 +105,8 @@ class OutcomeService
       doc.add_score score, @language
       @_send_request doc, callback
     catch err
+      console.log('LOGGING - ERROR in _send_replace_result:');
+      console.log(err);
       callback err, false
 
 
@@ -116,6 +118,7 @@ class OutcomeService
       doc.add_text text
       @_send_request doc, callback
     catch err
+      consol
       callback err, false
 
 
@@ -133,10 +136,10 @@ class OutcomeService
   send_read_result: (callback) ->
     doc = new OutcomeDocument @REQUEST_READ, @source_did, @
     @_send_request doc, (err, result, xml) =>
-      console.log('******************** FORKED');
-      return callback new errors.OutcomeResponseError('FORKED'), false
-
-      return callback(err, result) if err
+      if err
+        console.log('LOGGING - ERROR in _send_read_result:');
+        console.log(err);
+        return callback(err, result)
 
       score = parseFloat navigateXml(xml, 'imsx_POXBody.readResultResponse.result.resultScore.textString'), 10
 
@@ -158,6 +161,7 @@ class OutcomeService
   _send_request: (doc, callback) ->
     xml     = doc.finalize()
     body    = ''
+    res_body    = ''
     is_ssl  = @service_url_parts.protocol == 'https:'
 
     options =
@@ -174,14 +178,23 @@ class OutcomeService
     if @service_url_parts.port
       options.port = @service_url_parts.port
 
+    console.log('LOGGING - hostname, path, method, headers:');
+    console.log(options);
     # Make the request to the TC, verifying that the status code is valid and fetching the entire response body.
     req = (if is_ssl then https else http).request options, (res) =>
       res.setEncoding 'utf8'
       res.on 'data', (chunk) => body += chunk
+      console.log('LOGGING - response:');
+      console.log(res.statusCode);
+      res_body = res.body;
       res.on 'end', () =>
         @_process_response body, callback
 
     req.on 'error', (err) =>
+      console.log('LOGGING - ERROR in _send_request:');
+      console.log(err);
+      console.log('LOGGING - response body:');
+      console.log(res_body);
       callback err, false
 
     req.write xml
