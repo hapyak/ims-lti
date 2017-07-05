@@ -133,6 +133,9 @@ class OutcomeService
   send_read_result: (callback) ->
     doc = new OutcomeDocument @REQUEST_READ, @source_did, @
     @_send_request doc, (err, result, xml) =>
+      console.log('******************** FORKED');
+      return callback new errors.OutcomeResponseError('FORKED'), false
+
       return callback(err, result) if err
 
       score = parseFloat navigateXml(xml, 'imsx_POXBody.readResultResponse.result.resultScore.textString'), 10
