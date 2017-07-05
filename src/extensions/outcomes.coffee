@@ -120,7 +120,6 @@ class OutcomeService
       doc.add_text text
       @_send_request doc, callback
     catch err
-      consol
       callback err, false
 
 
