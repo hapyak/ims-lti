@@ -106,6 +106,8 @@ class OutcomeService
       @_send_request doc, callback
     catch err
       console.log('LOGGING - ERROR in _send_replace_result:');
+      console.log('Score:', score);
+      console.log('Doc:', doc);
       console.log(err);
       callback err, false
 
@@ -138,6 +140,8 @@ class OutcomeService
     @_send_request doc, (err, result, xml) =>
       if err
         console.log('LOGGING - ERROR in _send_read_result:');
+        console.log('Score:', result);
+        console.log('Doc:', xml);
         console.log(err);
         return callback(err, result)
 
@@ -223,9 +227,12 @@ class OutcomeService
 
       response  = result?.imsx_POXEnvelopeResponse
       code      = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_codeMajor'
+      console.log('LOGGING - code:', code);
 
       if code != 'success'
         msg = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_description'
+        console.log('LOGGING - ERROR in _process_response:');
+        console.log(msg);
         callback new errors.OutcomeResponseError(msg), false
       else
         callback null, true, response
