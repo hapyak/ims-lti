@@ -223,6 +223,9 @@ class OutcomeService
   _process_response: (body, callback) ->
     xml2js.parseString body, trim: true, (err, result) =>
       return callback new errors.OutcomeResponseError('The server responded with an invalid XML document'), false if err
+      console.log('LOGGING - body:')
+      console.log(body)
+
       console.log('LOGGING - result xml:')
       console.log(result)
 
