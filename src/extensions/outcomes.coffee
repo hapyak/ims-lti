@@ -222,7 +222,9 @@ class OutcomeService
 
   _process_response: (body, callback) ->
     xml2js.parseString body, trim: true, (err, result) =>
-      return callback new errors.OutcomeResponseError('The server responsed with an invalid XML document'), false if err
+      return callback new errors.OutcomeResponseError('The server responded with an invalid XML document'), false if err
+      console.log('LOGGING - result xml:')
+      console.log(result)
 
       response  = result?.imsx_POXEnvelopeResponse
       code      = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_codeMajor'
